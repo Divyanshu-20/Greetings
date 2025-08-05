@@ -3,6 +3,12 @@
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+
 export default function Home() {
   const [greetings, setGreetings] = useState<any[]>([]);
   const [newGreeting, setNewGreeting] = useState('');
@@ -56,7 +62,7 @@ export default function Home() {
     if (typeof window.ethereum !== 'undefined') {
       try {
         setIsLoading(true);
-        const accounts = await window.ethereum.request({
+        const accounts = await window.ethereum?.request({
           method: 'eth_requestAccounts'
         });
         setAccount(accounts[0]);
@@ -70,9 +76,7 @@ export default function Home() {
         
         await loadGreetings(contract);
         
-        contract.on('Greeted', () => {
-          loadGreetings(contract);
-        });
+        contract.on('Greeted', () => loadGreetings(contract));
       } catch (error) {
         console.error('Error connecting to wallet:', error);
       } finally {
